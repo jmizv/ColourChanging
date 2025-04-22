@@ -1,47 +1,32 @@
 package de.jmizv.colourchanging.scale;
 
-
-import de.jmizv.colourchanging.colour.ColorComparator;
-import de.jmizv.colourchanging.colour.ColorUtils;
-
+import de.jmizv.colourchanging.color.ColorComparator;
+import de.jmizv.colourchanging.color.ColorUtils;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-/**
- *
- * @author jmizv
- */
 public class DiscreteScale implements Scale {
 
-  private List<Integer> values;
+  private final List<Integer> values;
 
   public DiscreteScale(BufferedImage image) {
-    ObjectHistogramm<Integer> histo = new ObjectHistogramm<Integer>();
+    ObjectHistogramm<Integer> histo = new ObjectHistogramm<>();
     for (int i = 0; i < image.getWidth(); i++) {
       for (int j = 0; j < image.getHeight(); j++) {
         histo.count(lower(image.getRGB(i, j)));
       }
     }
-
-    List<Integer> keySet = new ArrayList<Integer>(histo.getMap().keySet());
-
-    Collections.sort(keySet, ColorComparator.getGrayComparator());
-    Collections.sort(keySet, ColorComparator.getRGBComparator(1,2,3,0));
-//    Collections.sort(keySet, ColorComparator.getLuminanceComparator());
-
+    List<Integer> keySet = new ArrayList<>(histo.getMap().keySet());
+    keySet.sort(ColorComparator.getGrayComparator());
     values = keySet;
   }
 
-  private int lower(int rgb) {
-
+  private static int lower(int rgb) {
     int[] r = ColorUtils.toIntArray(rgb);
-
     for (int i = 1; i < r.length; i++) {
       r[i] = r[i] / 20 * 20;
     }
-
     return ColorUtils.toInt(r);
   }
 

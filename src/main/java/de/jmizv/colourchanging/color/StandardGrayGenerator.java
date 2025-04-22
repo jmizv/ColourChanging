@@ -1,4 +1,4 @@
-package de.jmizv.colourchanging.colour;
+package de.jmizv.colourchanging.color;
 
 /**
  *

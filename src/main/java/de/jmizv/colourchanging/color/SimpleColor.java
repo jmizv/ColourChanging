@@ -1,4 +1,4 @@
-package de.jmizv.colourchanging.colour;
+package de.jmizv.colourchanging.color;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -24,23 +24,23 @@ public class SimpleColor {
    */
   public final static SimpleColor BLUE = new SimpleColor(0, 0, 1.0);
   /**
-   * Secondary colors – Magenta (1,0,1)
+   * Secondary color – Magenta (1,0,1)
    */
   public final static SimpleColor MAGENTA = new SimpleColor(1.0, 0.0, 1.0);
   /**
-   * Secondary colors – Yellow (1,1,0)
+   * Secondary color – Yellow (1,1,0)
    */
   public final static SimpleColor YELLOW = new SimpleColor(1.0, 1.0, 0);
   /**
-   * Secondary colors – Cyan (0,1,1)
+   * Secondary color – Cyan (0,1,1)
    */
   public final static SimpleColor CYAN = new SimpleColor(0.0, 1.0, 1.0);
   /**
-   * White (not really a colors :D)
+   * White (not really a color :D)
    */
   public final static SimpleColor WHITE = new SimpleColor(1.0, 1.0, 1.0);
   /**
-   * Black (not really a colors :D)
+   * Black (not really a color :D)
    */
   public final static SimpleColor BLACK = new SimpleColor(0.0, 0.0, 0.0);
   /**
@@ -61,29 +61,16 @@ public class SimpleColor {
    */
   private final double[] rgb;
 
-  /**
-   *
-   * @param r
-   * @param g
-   * @param b
-   */
-  public SimpleColor(double r, double g, double b) {
-    if (r > 1 || g > 1 || b > 1) {
-      throw new IllegalArgumentException(MessageFormat.format("At least one value is greater than 1: ({0},{1},{2})", r, g, b));
+  public SimpleColor(double red, double green, double blue) {
+    if (red > 1 || green > 1 || blue > 1) {
+      throw new IllegalArgumentException(
+          MessageFormat.format("At least one value is greater than 1: ({0},{1},{2})", red, green, blue));
     }
-    if (r < 0 || g < 0 || b < 0) {
-      throw new IllegalArgumentException(MessageFormat.format("At least one value is less than 0: ({0},{1},{2})", r, g, b));
+    if (red < 0 || green < 0 || blue < 0) {
+      throw new IllegalArgumentException(
+          MessageFormat.format("At least one value is less than 0: ({0},{1},{2})", red, green, blue));
     }
-    this.rgb = new double[]{r, g, b};
-  }
-
-  /**
-   * Dangerous.
-   *
-   * @param rgb
-   */
-  public SimpleColor(double[] rgb) {
-    this(rgb[0], rgb[1], rgb[2]);
+    rgb = new double[]{red, green, blue};
   }
 
   /**
@@ -98,21 +85,23 @@ public class SimpleColor {
 
   /**
    *
-   * @param s HTML-like String representation of a rgb colour, like "#abc123" or
+   * @param htmlString HTML-like String representation of a rgb colour, like "#abc123" or
    * "23bc47"
    */
-  public SimpleColor(String s) {
-    String k = s;
-    if (s.startsWith("#")) {
-      k = s.substring(1);
+  public SimpleColor(String htmlString) {
+    String internalHtmlString;
+    if (htmlString.startsWith("#")) {
+      internalHtmlString = htmlString.substring(1);
+    }else {
+      internalHtmlString = htmlString;
     }
-    if (k.length() != 6) {
-      throw new IllegalArgumentException("invalid string for simple color: " + s + ", expected hexadecimal string");
+    if (internalHtmlString.length() != 6) {
+      throw new IllegalArgumentException("invalid string for simple color: " + htmlString + ", expected hexadecimal string with or without a hyphen as first character.");
     }
-    double r = Integer.parseInt(k.substring(0, 2), 16) / 255.0;
-    double g = Integer.parseInt(k.substring(2, 4), 16) / 255.0;
-    double b = Integer.parseInt(k.substring(4, 6), 16) / 255.0;
-    this.rgb = new double[]{r, g, b};
+    double r = Integer.parseInt(internalHtmlString.substring(0, 2), 16) / 255.0;
+    double g = Integer.parseInt(internalHtmlString.substring(2, 4), 16) / 255.0;
+    double b = Integer.parseInt(internalHtmlString.substring(4, 6), 16) / 255.0;
+    rgb = new double[]{r, g, b};
   }
 
   /**
@@ -140,9 +129,7 @@ public class SimpleColor {
   }
 
   /**
-   *
    * @param idx 0 for red, 1 for green, 2 for blue, else RuntimeException
-   * @return
    */
   public double get(int idx) {
     return rgb[idx];
@@ -179,15 +166,10 @@ public class SimpleColor {
     return true;
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public int hashCode() {
     int hash = 7;
     hash = 37 * hash + Arrays.hashCode(this.rgb);
     return hash;
   }
-
 }

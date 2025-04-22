@@ -1,24 +1,17 @@
-package de.jmizv.colourchanging.colour;
+package de.jmizv.colourchanging.color;
 
 import java.util.Comparator;
 
-/**
- *
- * @author jmizv
- */
 public abstract class ColorComparator implements Comparator<Integer> {
 
   public static ColorComparator getLuminanceComparator() {
     return new ColorComparator() {
       @Override
       public int compare(Integer o1, Integer o2) {
-        int c1 = o1.intValue();
-        int c2 = o2.intValue();
-
-        int[] hsv1 = ColorUtils.toIntArray(c1);
+        int[] hsv1 = ColorUtils.toIntArray(o1);
         hsv1 = ColorUtils.RGB_HSV(hsv1);
 
-        int[] hsv2 = ColorUtils.toIntArray(c2);
+        int[] hsv2 = ColorUtils.toIntArray(o2);
         hsv2 = ColorUtils.RGB_HSV(hsv2);
 
         int k = hsv1[2] - hsv2[2];
@@ -35,20 +28,16 @@ public abstract class ColorComparator implements Comparator<Integer> {
     return new ColorComparator() {
       @Override
       public int compare(Integer o1, Integer o2) {
-        int c1 = o1.intValue();
-        int c2 = o2.intValue();
+        int[] rgb1 = ColorUtils.toIntArray(o1);
+        int[] rgb2 = ColorUtils.toIntArray(o2);
 
-        int[] rgb1 = ColorUtils.toIntArray(c1);
-        int[] rgb2 = ColorUtils.toIntArray(c2);
-
-        int k = 0;
+        int k;
         for (int idx : new int[]{idx1, idx2, idx3, idx4}) {
           k = rgb1[idx] - rgb2[idx];
           if (k != 0) {
             return k;
           }
         }
-
         return 0;
       }
     };

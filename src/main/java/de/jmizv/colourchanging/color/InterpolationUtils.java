@@ -1,4 +1,4 @@
-package de.jmizv.colourchanging.colour;
+package de.jmizv.colourchanging.color;
 
 /**
  * This class contains some useful method for linear interpolation. Bilinear and
