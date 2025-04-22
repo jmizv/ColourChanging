@@ -1,39 +1,26 @@
 package de.jmizv.colourchanging.scale;
 
-import de.jmizv.colourchanging.colour.InterpolationUtils;
-import de.jmizv.colourchanging.colour.SimpleColor;
-import org.apache.commons.lang3.tuple.Pair;
-
+import de.jmizv.colourchanging.color.InterpolationUtils;
+import de.jmizv.colourchanging.color.SimpleColor;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import org.apache.commons.lang3.tuple.Pair;
 
-/**
- *
- * @author jmizv
- */
 public class MultipleGradientScale implements Scale {
 
   private final List<Pair<Double, SimpleColor>> colors;
   private final double[] segmentBorders;
 
-  /**
-   *
-   * @param colors
-   */
   public MultipleGradientScale(List<Pair<Double, SimpleColor>> colors) {
-    Collections.sort(colors, new Comparator<Pair<Double, SimpleColor>>() {
-      @Override
-      public int compare(Pair<Double, SimpleColor> o1, Pair<Double, SimpleColor> o2) {
-        return Double.compare(o1.getLeft(), o2.getLeft());
-      }
-    });
-    this.colors = colors;
-    segmentBorders = new double[colors.size()];
+    var tempColors = new ArrayList<>(colors);
+    tempColors.sort(Comparator.comparingDouble(Pair::getLeft));
+    this.colors = tempColors;
+    segmentBorders = new double[this.colors.size()];
     int i = 0;
-    for (Pair<Double, SimpleColor> pair : colors) {
+    for (Pair<Double, SimpleColor> pair : this.colors) {
       segmentBorders[i++] = pair.getLeft();
     }
   }
@@ -53,7 +40,7 @@ public class MultipleGradientScale implements Scale {
     if (d1 >= d2 || d2 >= d3) {
       throw new IllegalArgumentException("Values are not ordered: " + d1 + " >=" + d2 + " or " + d2 + " >= " + d3 + "\nd1>=d2 || d2>=d3");
     }
-    this.colors = new ArrayList<Pair<Double, SimpleColor>>(3);
+    this.colors = new ArrayList<>(3);
     this.segmentBorders = new double[]{d1, d2, d3};
 
     colors.add(Pair.of(d1, sc1));
@@ -61,11 +48,6 @@ public class MultipleGradientScale implements Scale {
     colors.add(Pair.of(d3, sc3));
   }
 
-  /**
-   *
-   * @param value
-   * @return
-   */
   @Override
   public double[] getColor(double value) {
     Pair<Double, SimpleColor> p1;
@@ -95,28 +77,16 @@ public class MultipleGradientScale implements Scale {
     return new double[]{r, g, b};
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public double getMax() {
     return colors.get(colors.size() - 1).getLeft();
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public double getMin() {
     return colors.get(0).getLeft();
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public double[] getSegmentBorders() {
     double[] d = new double[segmentBorders.length];
@@ -133,13 +103,10 @@ public class MultipleGradientScale implements Scale {
       return false;
     }
     final MultipleGradientScale other = (MultipleGradientScale) obj;
-    if (this.colors != other.colors && (this.colors == null || !this.colors.equals(other.colors))) {
+    if (!Objects.equals(this.colors, other.colors)) {
       return false;
     }
-    if (!Arrays.equals(this.segmentBorders, other.segmentBorders)) {
-      return false;
-    }
-    return true;
+    return Arrays.equals(this.segmentBorders, other.segmentBorders);
   }
 
   @Override
@@ -150,43 +117,21 @@ public class MultipleGradientScale implements Scale {
     return hash;
   }
 
-  /**
-   *
-   * @return
-   */
   public static MultipleGradientScale getRainbowScale() {
     return new MultipleGradientScale(getListRainbow());
   }
 
-  /**
-   *
-   * @return
-   */
-  public static MultipleGradientScale getRainbowScale90Degree() {
-    return new MultipleGradientScale(getListRainbow90Degree());
-  }
-
-  /**
-   *
-   * @return
-   */
   public static MultipleGradientScale getGYORWScale() {
     return new MultipleGradientScale(getListGYORW());
   }
 
   /**
    * A scale from green-yellow-orange-red-violett.
-   *
-   * @return
    */
   public static MultipleGradientScale getGYORVScale() {
     return new MultipleGradientScale(getListGYORV());
   }
 
-  /**
-   *
-   * @return
-   */
   public static MultipleGradientScale getGYRScale() {
     return new MultipleGradientScale(getListGYR());
   }
@@ -195,39 +140,29 @@ public class MultipleGradientScale implements Scale {
     return new MultipleGradientScale(getListGYR2());
   }
 
-  /**
-   *
-   * @return
-   */
   private static List<Pair<Double, SimpleColor>> getListGYORW() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
+    List<Pair<Double, SimpleColor>> list = new ArrayList<>();
     list.add(Pair.of(0.0, SimpleColor.GREEN));
-    list.add(Pair.of(0.1 * 90, SimpleColor.YELLOW));
-    list.add(Pair.of(0.2 * 90, new SimpleColor(1.0, 0.5, 0.0)));
-    list.add(Pair.of(0.5 * 90, SimpleColor.RED));
-    list.add(Pair.of(1.0 * 90, SimpleColor.WHITE));
+    list.add(Pair.of(0.1, SimpleColor.YELLOW));
+    list.add(Pair.of(0.2, new SimpleColor(1.0, 0.5, 0.0)));
+    list.add(Pair.of(0.5, SimpleColor.RED));
+    list.add(Pair.of(1.0, SimpleColor.WHITE));
     return list;
   }
 
-  /**
-   *
-   * @return
-   */
   private static List<Pair<Double, SimpleColor>> getListGYORV() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
-    list.add(Pair.of(0.00, SimpleColor.GREEN));
-    list.add(Pair.of(9.00, SimpleColor.YELLOW));
-    list.add(Pair.of(18.0, new SimpleColor(1.0, 0.5, 0.0)));
-    list.add(Pair.of(45.0, SimpleColor.RED));
-    list.add(Pair.of(90.0, new SimpleColor(0.5, 0.0, 0.5)));
+    List<Pair<Double, SimpleColor>> list = new ArrayList<>();
+    list.add(Pair.of(0.0, SimpleColor.GREEN));
+    list.add(Pair.of(0.1, SimpleColor.YELLOW));
+    list.add(Pair.of(0.2, new SimpleColor(1.0, 0.5, 0.0)));
+    list.add(Pair.of(0.5, SimpleColor.RED));
+    list.add(Pair.of(1.0, new SimpleColor(0.5, 0.0, 0.5)));
     return list;
   }
 
   /**
    * A scale from green-yellow-orange-red-violet- ... and over more pastell
    * colours back to green.
-   *
-   * @return
    */
   public static MultipleGradientScale getGYORV180() {
     return new MultipleGradientScale(getListGYORV180());
@@ -237,12 +172,8 @@ public class MultipleGradientScale implements Scale {
     return new MultipleGradientScale(getListGYORV_Pseudo_180());
   }
 
-  /**
-   *
-   * @return
-   */
   private static List<Pair<Double, SimpleColor>> getListGYORV180() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
+    List<Pair<Double, SimpleColor>> list = new ArrayList<>();
     list.add(Pair.of(0.00000000, SimpleColor.GREEN));               //   0 00ff00
     list.add(Pair.of(9.00000000, SimpleColor.YELLOW));              //   5 ffff00
     list.add(Pair.of(18.0000000, new SimpleColor(1.0, 0.5, 0.0)));  //  10 ff8000
@@ -255,12 +186,8 @@ public class MultipleGradientScale implements Scale {
     return list;
   }
 
-  /**
-   *
-   * @return
-   */
   public static List<Pair<Double, SimpleColor>> getListGYORV_Pseudo_180() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
+    List<Pair<Double, SimpleColor>> list = new ArrayList<>();
     list.add(Pair.of(0.00000000, SimpleColor.GREEN));               //   0 00ff00
     list.add(Pair.of(9.00000000, SimpleColor.YELLOW));              //   5 ffff00
     list.add(Pair.of(18.0000000, new SimpleColor(1.0, 0.5, 0.0)));  //  10 ff8000
@@ -273,12 +200,8 @@ public class MultipleGradientScale implements Scale {
     return list;
   }
 
-  /**
-   *
-   * @return
-   */
   private static List<Pair<Double, SimpleColor>> getListRainbow() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
+    List<Pair<Double, SimpleColor>> list = new ArrayList<>();
     list.add(Pair.of(0.0, SimpleColor.RED));
     list.add(Pair.of(1 / 6.0, SimpleColor.YELLOW));
     list.add(Pair.of(2 / 6.0, SimpleColor.GREEN));
@@ -289,56 +212,14 @@ public class MultipleGradientScale implements Scale {
     return list;
   }
 
-  /**
-   *
-   * @return
-   */
-  private static List<Pair<Double, SimpleColor>> getListRainbow90Degree() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
-    list.add(Pair.of(0.0, SimpleColor.RED));
-    list.add(Pair.of(18.0, SimpleColor.YELLOW));
-    list.add(Pair.of(36.0, SimpleColor.GREEN));
-    list.add(Pair.of(54.0, SimpleColor.CYAN));
-    list.add(Pair.of(72.0, SimpleColor.BLUE));
-    list.add(Pair.of(90.0, SimpleColor.MAGENTA));
-//    list.add(Pair.of(90.0, SimpleColor.RED));
-    return list;
-  }
-
-  /**
-   *
-   * @return
-   */
   private static List<Pair<Double, SimpleColor>> getListRainbow180Degree_TRUE() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
+    List<Pair<Double, SimpleColor>> list = new ArrayList<>();
     list.add(Pair.of(0.0, SimpleColor.RED));
     list.add(Pair.of(18.0 * 2, SimpleColor.YELLOW));
     list.add(Pair.of(36.0 * 2, SimpleColor.GREEN));
     list.add(Pair.of(54.0 * 2, SimpleColor.CYAN));
     list.add(Pair.of(72.0 * 2, SimpleColor.BLUE));
     list.add(Pair.of(90.0 * 2, SimpleColor.MAGENTA));
-//    list.add(Pair.of(90.0, SimpleColor.RED));
-    return list;
-  }
-
-  public static MultipleGradientScale getRainbow180Degree_TRUE() {
-    return new MultipleGradientScale(getListRainbow180Degree_TRUE());
-  }
-
-  public static MultipleGradientScale getRainbow180Degree() {
-    return new MultipleGradientScale(getListRainbow180Degree());
-  }
-
-  private static List<Pair<Double, SimpleColor>> getListRainbow180Degree() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
-
-    list.add(Pair.of(0.00, SimpleColor.GREEN));
-    list.add(Pair.of(9.00, SimpleColor.YELLOW));
-    list.add(Pair.of(18.0, new SimpleColor(1.0, 0.5, 0.0)));
-    list.add(Pair.of(45.0, SimpleColor.RED));
-    list.add(Pair.of(90.0, new SimpleColor(0.5, 0.0, 0.5)));
-    list.add(Pair.of(180., new SimpleColor(0.5, 1, 0.5)));
-
     return list;
   }
 
@@ -347,7 +228,7 @@ public class MultipleGradientScale implements Scale {
   }
 
   private static List<Pair<Double, SimpleColor>> getListRainbow_0_1() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
+    List<Pair<Double, SimpleColor>> list = new ArrayList<>();
 
     list.add(Pair.of(0. / 6, new SimpleColor(1.0, 0.0, 0.0)));
     list.add(Pair.of(1. / 6, new SimpleColor(1.0, 1.0, 0.0)));
@@ -360,24 +241,16 @@ public class MultipleGradientScale implements Scale {
     return list;
   }
 
-  /**
-   *
-   * @return
-   */
   private static List<Pair<Double, SimpleColor>> getListGYR() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
+    List<Pair<Double, SimpleColor>> list = new ArrayList<>();
     list.add(Pair.of(0.0, SimpleColor.RED));
     list.add(Pair.of(0.2, SimpleColor.YELLOW));
     list.add(Pair.of(1.0, SimpleColor.GREEN));
     return list;
   }
 
-  /**
-   *
-   * @return
-   */
   private static List<Pair<Double, SimpleColor>> getListGYR2() {
-    List<Pair<Double, SimpleColor>> list = new ArrayList<Pair<Double, SimpleColor>>();
+    List<Pair<Double, SimpleColor>> list = new ArrayList<>();
     list.add(Pair.of(0.0, SimpleColor.RED));
     list.add(Pair.of(0.05, SimpleColor.YELLOW));
     list.add(Pair.of(0.2, SimpleColor.GREEN));

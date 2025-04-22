@@ -1,10 +1,9 @@
 package de.jmizv.colourchanging;
 
-import de.jmizv.colourchanging.colour.ColorUtils;
-import de.jmizv.colourchanging.colour.GrayGenerator;
-import de.jmizv.colourchanging.colour.StandardGrayGenerator;
+import de.jmizv.colourchanging.color.ColorUtils;
+import de.jmizv.colourchanging.color.GrayGenerator;
+import de.jmizv.colourchanging.color.StandardGrayGenerator;
 import de.jmizv.colourchanging.scale.Scale;
-
 import java.awt.image.BufferedImage;
 
 public class ColourChanging {

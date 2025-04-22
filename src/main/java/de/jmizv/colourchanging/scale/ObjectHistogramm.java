@@ -3,17 +3,9 @@ package de.jmizv.colourchanging.scale;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author jmizv
- */
 public class ObjectHistogramm<T> {
 
-  private Map<T, Integer> map;
-
-  public ObjectHistogramm() {
-    map = new HashMap<T, Integer>();
-  }
+  private final Map<T, Integer> map = new HashMap<>();
 
   public void count(T t) {
     if (!map.containsKey(t)) {
@@ -24,7 +16,7 @@ public class ObjectHistogramm<T> {
   }
 
   public int getAmount(T t) {
-    return map.get(t).intValue();
+    return map.get(t);
   }
 
   public Map<T, Integer> getMap() {

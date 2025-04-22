@@ -1,12 +1,10 @@
 package de.jmizv.colourchanging.scale;
 
 
-import de.jmizv.colourchanging.colour.SimpleColor;
+import de.jmizv.colourchanging.color.SimpleColor;
 
 /**
  * Scale for values where only the sign is considered.
- *
- * @author jmizv
  */
 public class DiscreteSignumScale implements Scale {
 
@@ -22,11 +20,6 @@ public class DiscreteSignumScale implements Scale {
     this.simpleColors = new SimpleColor[]{neg, nul, pos};
   }
 
-  /**
-   *
-   * @param value
-   * @return
-   */
   @Override
   public double[] getColor(double value) {
     if (value < 0) {
@@ -38,38 +31,18 @@ public class DiscreteSignumScale implements Scale {
     return new double[]{simpleColors[1].get(0), simpleColors[1].get(1), simpleColors[1].get(2)};
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public double getMax() {
     return 1.0;
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public double getMin() {
     return -1.0;
   }
 
-  /**
-   *
-   * @return
-   */
   @Override
   public double[] getSegmentBorders() {
     return new double[]{-1.0, 0.0, 1.0};
-  }
-
-  /**
-   *
-   * @return
-   */
-  public static DiscreteSignumScale getInflowOutflowScale() {
-    return new DiscreteSignumScale(SimpleColor.W_BLUE, SimpleColor.WHITE, SimpleColor.W_RED);
   }
 }

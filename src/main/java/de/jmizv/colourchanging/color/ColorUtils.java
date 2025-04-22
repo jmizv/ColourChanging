@@ -1,9 +1,5 @@
-package de.jmizv.colourchanging.colour;
+package de.jmizv.colourchanging.color;
 
-/**
- *
- * @author jmizv
- */
 public class ColorUtils {
 
   @Deprecated
